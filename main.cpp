@@ -10,31 +10,49 @@
 #include "main.h"
 using namespace std;
 
+float minMillis =  64.f;
+float maxMillis = 39062.f;
+
+bool direction = true;
+int currentMillis = 400;
+int servoPin = 0;
+
+void setMillis(int servoPin, float millis) {
+    pwm_set_gpio_level(servoPin, (millis/20000.f)/maxMillis);
+}
+
+void setServo(int servoPin, float startMillis) {
+    
+    gpio_set_function(servoPin, GPIO_FUNC_PWM);
+
+    uint slice_num = pwm_gpio_to_slice_num(servoPin);
+
+    pwm_config config = pwm_get_default_config();
+    pwm_config_set_clkdiv(&config, 64.f);
+    pwm_config_set_wrap(&config, 39062.f);
+
+    pwm_init(slice_num, &config, true);
+
+    setMillis(servoPin, startMillis);
+
+}
+
 int main()
 {
-    const uint LED = PICO_DEFAULT_LED_PIN;
-
-    gpio_init(LED);
-
-    gpio_set_dir(LED, GPIO_OUT);
-
-    stdio_init_all();
-
-    int a = 4;
-
-    int b = 8;
-
-    int c = a + b; 
-
-    cout << c << '\n';
+    setServo(servoPin, currentMillis);
 
     while (true)
     {
-        cout << "Deadly Virus";
-        gpio_put(LED, 1);
-        sleep_ms(a * 100);
-        gpio_put(LED, 0);
-        sleep_ms(b * 100);
+        if (direction == true) {
+            currentMillis += 5;
+        } else {
+            currentMillis -= 5;
+        }
+        if(currentMillis >= 2400) direction = false;
+        if(currentMillis <= 400) direction = true;
+
+        setMillis(servoPin, currentMillis);
+        sleep_ms(10);
     }
 
     return 0;
