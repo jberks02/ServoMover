@@ -7,52 +7,55 @@
  * @licence     MIT
  *
  */
+
 #include "main.h"
+#include "./pwmControl.cpp"
 using namespace std;
 
-float minMillis =  64.f;
-float maxMillis = 39062.f;
-
 bool direction = true;
-int currentMillis = 400;
 int servoPin = 0;
 
-void setMillis(int servoPin, float millis) {
-    pwm_set_gpio_level(servoPin, (millis/20000.f)/maxMillis);
-}
+int LED = PICO_DEFAULT_LED_PIN;
 
-void setServo(int servoPin, float startMillis) {
-    
-    gpio_set_function(servoPin, GPIO_FUNC_PWM);
+void setEmbeddedLed(int LED) {
 
-    uint slice_num = pwm_gpio_to_slice_num(servoPin);
+    gpio_init(LED);
 
-    pwm_config config = pwm_get_default_config();
-    pwm_config_set_clkdiv(&config, 64.f);
-    pwm_config_set_wrap(&config, 39062.f);
-
-    pwm_init(slice_num, &config, true);
-
-    setMillis(servoPin, startMillis);
+    gpio_set_dir(LED, GPIO_OUT);
 
 }
 
 int main()
 {
-    setServo(servoPin, currentMillis);
+    S51Servo pin0Servo(servoPin, 0.0f, 180.0f, 225.0f);
+
+    pin0Servo.setupAngleServoUpdateByAngle();
+
+    setEmbeddedLed(LED);
+
+    pin0Servo.setServoAngleByAngle(pin0Servo.maxAngle);
+
+    sleep_ms(500);
+
+    pin0Servo.setServoAngleByAngle(pin0Servo.minAngle);
+
+    sleep_ms(1000);
 
     while (true)
     {
-        if (direction == true) {
-            currentMillis += 5;
-        } else {
-            currentMillis -= 5;
+        
+        gpio_put(LED, 0);
+        
+        for(int i = 0; i <= pin0Servo.maxAngle; i++ ) {
+            pin0Servo.setServoAngleByAngle(i);
+            sleep_ms(5);
         }
-        if(currentMillis >= 2400) direction = false;
-        if(currentMillis <= 400) direction = true;
-
-        setMillis(servoPin, currentMillis);
-        sleep_ms(10);
+        gpio_put(LED, 1);
+        for(int i = 180; i >= pin0Servo.minAngle; i--) {
+            pin0Servo.setServoAngleByAngle(i);
+            sleep_ms(5);
+        }
+        sleep_ms(200);
     }
 
     return 0;
