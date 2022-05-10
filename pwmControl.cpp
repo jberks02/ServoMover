@@ -47,7 +47,7 @@ class S51Servo {
     public: void setServoAngleByAngle(float angle) {
         try {
             
-        if(angle <= minAngle || angle >= maxAngle || !angleMultiplier) throw "Out of range angle requested";
+        if(angle < minAngle || angle > maxAngle || !angleMultiplier) throw "Out of range angle requested";
 
         currentMillis = (angleMultiplier * angle) + minMillis;
 
