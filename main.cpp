@@ -29,7 +29,7 @@ void setEmbeddedLed(int LED) {
 int main()
 {
     S51Servo armBase(0, 0.0f, 180.0f, 250.0f);
-    S51Servo armCantaLever(1,  0.0f, 130.0f, 250.0f);
+    S51Servo armCantaLever(1,  0.0f, 130.0f, 225.0f);
     S51Servo armMain(2, 0.0f, 80.0f, 250.0f);
     S51Servo claw(3, -2.0f, 180.0f, 200.0f);
     S51Servo door(4, 0.0f, 180.0f, 250.0f);
@@ -37,25 +37,33 @@ int main()
     setEmbeddedLed(LED);
     gpio_put(LED, 1);    
 
+    int count = 0;
+
     // AutomatedSequence controller(claw, door, armMain, armCantaLever, armBase);
 
     // controller.s/\etAutorun(true);
 
     while (true)
     {
+
+        //Pick up ball
+
         door.moveToAngleAtAnglePerTimeRate(100, 1);
 
         door.moveToAngleAtAnglePerTimeRate(1, 20);
 
         claw.moveToAngleAtAnglePerTimeRate(40, 1);
 
-        armBase.moveToAngleAtAnglePerTimeRate(57, 20);
+        armBase.moveToAngleAtAnglePerTimeRate(69, 20);
 
-        armCantaLever.moveToAngleAtAnglePerTimeRate(6, 20);
+        armCantaLever.moveToAngleAtAnglePerTimeRate(4, 20);
 
-        armMain.moveToAngleAtAnglePerTimeRate(8, 20);
+        armMain.moveToAngleAtAnglePerTimeRate(11, 20);
 
-        claw.moveToAngleAtAnglePerTimeRate(0, 20);
+        claw.moveToAngleAtAnglePerTimeRate(0, 1);
+
+        //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        //Move Ball and drop it
 
         armCantaLever.moveToAngleAtAnglePerTimeRate(20, 20);
 
@@ -65,9 +73,9 @@ int main()
 
         // armBase.setServoAngleByAngle(50);
 
-        armCantaLever.moveToAngleAtAnglePerTimeRate(57, 20);
+        armCantaLever.moveToAngleAtAnglePerTimeRate(55, 1);
 
-        armBase.moveToAngleAtAnglePerTimeRate(20, 20);
+        armBase.moveToAngleAtAnglePerTimeRate(31, 20);
 
         armMain.moveToAngleAtAnglePerTimeRate(10, 20);
 
@@ -75,9 +83,9 @@ int main()
 
         sleep_ms(500);
 
-        armMain.moveToAngleAtAnglePerTimeRate(1, 20);
+        armMain.moveToAngleAtAnglePerTimeRate(0, 20);
 
-        armCantaLever.moveToAngleAtAnglePerTimeRate(1, 20);
+        armCantaLever.moveToAngleAtAnglePerTimeRate(0, 20);
 
         claw.moveToAngleAtAnglePerTimeRate(0, 1);
 
